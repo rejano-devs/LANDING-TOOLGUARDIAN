@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ToolGuardian · Sistema inteligente de control de herramientas</title>
+
+
+<style>
+:root {
+  --white: #ffffff;
+  --gray-light: #f3f4f6;
+  --gray: #d1d3d6;
+  --gray-dark: #9ca0a6;
+  --black: #1d1f21;
+  --accent: #2c2e31;
+}
+* { box-sizing: border-box; font-family: "Inter", system-ui, sans-serif; margin: 0; padding: 0; }
+body { background: var(--white); color: var(--black); line-height: 1.4; }
+/* Header */
+header { width: 100%; background: rgba(255,255,255,.8); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--gray); position: fixed; top: 0; left: 0; z-index: 50; }
+.nav { max-width: 1100px; margin: auto; padding: 1rem; display: flex;
+  justify-content: space-between; align-items: center; }
+.logo img { height: 44px; }
+.nav-links { display: flex; gap: 1.4rem; }
+.nav-links a { text-decoration: none; color: var(--black); font-weight: 500; font-size: .95rem; }
+.mobile-btn { display: none; width: 32px; cursor: pointer; }
+@media (max-width: 760px) {
+  .nav-links { display: none; position: absolute; top: 70px; right: 0; width: 200px;
+    background: var(--white); border-left: 1px solid var(--gray); border-bottom: 1px solid var(--gray);
+    flex-direction: column; padding: 1rem; }
+  .nav-links.show { display: flex; }
+  .mobile-btn { display: block; }
+}
+/* Hero */
+.hero { margin-top: 90px; max-width: 1100px; margin-left: auto; margin-right: auto;
+  padding: 2rem 1rem 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+.hero h1 { font-size: 2.7rem; font-weight: 800; margin-bottom: .8rem; }
+.hero p { font-size: 1.1rem; color: var(--gray-dark); margin-bottom: 1.5rem; }
+.hero img { width: 100%; border-radius: 14px; box-shadow: 0 5px 22px rgba(0,0,0,.18); }
+.btn-primary { background: var(--black); color: var(--white); padding: .9rem 1.7rem; border: none;
+  border-radius: 10px; font-size: 1rem; cursor: pointer; font-weight: 600; }
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; text-align: center; }
+  .hero h1 { font-size: 2.2rem; }
+}
+/* Secciones */
+.section { max-width: 1100px; margin: 4rem auto; padding: 1rem; }
+.section h2 { font-size: 2rem; margin-bottom: .4rem; }
+.section p.sub { font-size: 1.1rem; color: var(--gray-dark); margin-bottom: 2rem; }
+/* Features */
+.features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.7rem; }
+.feature-card { background: var(--gray-light); padding: 1.4rem;
+  border-radius: 12px; border: 1px solid var(--gray); }
+.feature-card h3 { font-size: 1.05rem; margin-bottom: .5rem; }
+.feature-card p { color: #5a5d61; font-size: .9rem; }
+@media (max-width: 980px){ .features { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 760px){ .features { grid-template-columns: 1fr; } }
+/* Contacto */
+.contact { max-width: 900px; margin: 4rem auto; padding: 2rem; background: var(--gray-light);
+  border-radius: 14px; border: 1px solid var(--gray); }
+.contact h2 { font-size: 1.9rem; margin-bottom: .6rem; }
+.contact p { color: var(--gray-dark); margin-bottom: 1.6rem; }
+.form-grid { display: grid; gap: 1.2rem; }
+input, select, textarea {
+  width: 100%; padding: .9rem; border-radius: 10px; border: 1px solid var(--gray);
+  background: var(--white); font-size: 1rem;
+}
+textarea { min-height: 110px; resize: vertical; }
+.contact button { margin-top: .8rem; width: 100%; background: var(--black); color: var(--white);
+  padding: 1rem; border: none; border-radius: 10px; font-size: 1.05rem; cursor: pointer; font-weight: 600; }
+/* Cómo funciona */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.7rem; }
+.step-card { background: var(--gray-light); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gray); }
+.step-number { width: 28px; height: 28px; border-radius: 999px; background: var(--black);
+  color: var(--white); font-size: .85rem; display: flex; align-items: center;
+  justify-content: center; margin-bottom: .6rem; }
+.step-card h3 { margin-bottom: .4rem; }
+.step-card p { font-size: .9rem; color: #5a5d61; }
+/* Casos de uso */
+.usecases { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.7rem; }
+.usecase-card { background: var(--gray-light); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--gray); }
+.usecase-tag { display: inline-block; padding: .15rem .5rem;
+  border-radius: 999px; border: 1px solid var(--gray); font-size: .8rem;
+  margin-bottom: .4rem;}
+.usecase-card h3 { font-size: 1.05rem; margin-bottom: .5rem; }
+.usecase-card p { color: #5a5d61; font-size: .9rem; }
+
+
+@media (max-width: 980px){
+  .steps{ grid-template-columns: repeat(2, 1fr); }
+  .usecases{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px){
+  .steps{ grid-template-columns: 1fr; }
+  .usecases{ grid-template-columns: 1fr; }
+}
+
+
+/* FAQ + Resumen tecnológico */
+.faq-tech { display: grid; grid-template-columns: 1.2fr .8fr; gap: 4rem; align-items: start; }
+.kicker { font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-dark); margin-bottom: .6rem; }
+.faq h2, .tech h2 { font-size: 2.1rem; margin-bottom: 1.2rem; }
+.faq-item { padding: 1.3rem 0; border-bottom: 1px solid var(--gray); }
+.faq-item:first-of-type { border-top: 1px solid var(--gray); margin-top: .4rem; }
+.faq-q { font-weight: 700; margin-bottom: .55rem; font-size: 1.05rem; }
+.faq-a { color: #5a5d61; max-width: 58ch; }
+.tech-card { background: var(--white); border: 1px solid var(--gray); border-radius: 14px; padding: 1.4rem 1.4rem .4rem; }
+.tech-title { font-size: 2.1rem; margin-bottom: 1.2rem; }
+.tech-row { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.2rem; padding: .7rem 0; border-bottom: 1px solid var(--gray); }
+.tech-row:last-child { border-bottom: none; }
+.tech-k { font-weight: 600; }
+.tech-v { color: #5a5d61; text-align: right; }
+@media (max-width: 980px){
+  .faq-tech { grid-template-columns: 1fr; gap: 2rem; }
+  .tech-v { text-align: left; }
+  .tech-row { grid-template-columns: 1fr; gap: .25rem; }
+}
+
+/* Footer */
+footer { margin-top: 4rem; padding: 2rem; text-align: center; color: var(--gray-dark); font-size: .9rem; }
+
+html{ scroll-behavior:smooth; scroll-padding-top: 44px; }
+section{ scroll-margin-top: 44px; }
+
+/* NAV hover + active */
+.nav-links a{
+  position: relative;
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background .2s ease, color .2s ease;
+}
+.nav-links a:hover{
+  background: rgba(20, 44, 72, .06);
+  color: #0b2a48;
+}
+.nav-links a::after{
+  content:"";
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:6px;
+  height:2px;
+  background: currentColor;
+  opacity:0;
+  transform: scaleX(.6);
+  transition: opacity .2s ease, transform .2s ease;
+  border-radius: 2px;
+}
+.nav-links a:hover::after{
+  opacity:.25;
+  transform: scaleX(1);
+}
+
+
+/* HOW IT WORKS layout + dashboard mock */
+.how-grid{
+  display:grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 28px;
+  align-items: start;
+}
+.how-cards{ display:grid; gap:16px; }
+.how-card{
+  background:#fff;
+  border:1px solid rgba(20,44,72,.10);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+}
+.how-step{
+  width:32px;height:32px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;
+  background:#0b2a48;color:#fff;font-weight:700;
+  margin-bottom:10px;
+}
+.how-dashboard{
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.204), rgba(20,44,72,.04));
+  border: 1px solid rgba(20,44,72,.10);
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 18px 50px rgba(10,20,30,.08);
+}
+.how-dashboard .pill{
+  display:inline-flex; align-items:center;
+  border:1px solid rgba(20,44,72,.16);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  background:#fff;
+}
+.how-dashboard .status{
+  display:inline-flex; align-items:center; gap:8px;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: rgba(46, 204, 113, .12);
+  color: #127a3a;
+}
+.how-dashboard .dot{
+  width:10px;height:10px;border-radius:999px;background:#2ecc71;
+  box-shadow: 0 0 0 3px rgba(46,204,113,.18);
+}
+.dash-top{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+
+.dash-cards{ display:grid; gap:14px; }
+.dash-card{
+  background:#fff;
+  border:1px solid rgba(20,44,72,.10);
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+}
+.dash-card.dark{
+  background: radial-gradient(140% 120% at 10% 10%, rgba(76, 197, 255, .18), rgba(11,42,72,1));
+  color:#fff;
+  border: none;
+}
+.dash-title{ font-weight:700; font-size:13px; opacity:.9; margin-bottom:10px; }
+.dash-row{ display:grid; grid-template-columns: 1.2fr .8fr; gap:12px; }
+.dash-item{ display:flex; justify-content:space-between; gap:10px; padding:6px 0; font-size:13px; }
+.dash-item span{ opacity:.85; }
+.kpi{ background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18);
+  border-radius: 14px; padding: 10px 10px 8px; margin-bottom:10px; text-align:center;}
+.kpi-n{ font-size: 18px; font-weight:800; }
+.kpi-l{ font-size: 12px; opacity:.85; }
+
+.dash-bar{ height: 8px; background: rgba(255,255,255,.14); border-radius: 999px; overflow:hidden; margin-top:10px;}
+.dash-bar span{ display:block; height:100%; width:72%; background: rgba(46,204,113,.85); }
+
+.dash-metrics{ display:flex; justify-content:space-between; gap:12px; }
+.metric-n{ font-weight:800; font-size:18px; }
+.metric-l{ font-size:12px; opacity:.75; }
+
+.dash-foot{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+.dash-foot > div{
+  background:#fff;
+  border:1px solid rgba(20,44,72,.10);
+  border-radius: 16px;
+  padding: 10px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.muted{ font-size:12px; opacity:.72; }
+
+@media (max-width: 980px){
+  .how-grid{ grid-template-columns: 1fr; }
+  .dash-foot{ grid-template-columns: 1fr; }
+  .dash-row{ grid-template-columns: 1fr; }
+}
+
+</style>
+
+<script>
+  function toggleMenu() {
+    document.querySelector('.nav-links').classList.toggle('show');
+  }
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180x180.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="shortcut icon" href="assets/favicon.ico">
+
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="#top" class="logo"><img src="assets/logo.png" alt="ToolGuardian Logo"></a>
+    <img src="data:image/svg+xml;utf8,<svg width='32' height='32' xmlns='http://www.w3.org/2000/svg'><path stroke='%23000' stroke-width='3' d='M4 8h24M4 16h24M4 24h24'/></svg>"
+         class="mobile-btn" onclick="toggleMenu()">
+    <div class="nav-links">
+      <a href="#beneficios">Por qué ToolGuardian</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="producto">
+  <div>
+    <h1>Control total</h1>
+    <h1>FOD cero</h1>
+    <h1> Máxima trazabilidad</h1>
+    <p>ToolGuardian transforma tus carros de herramientas actuales en plataformas inteligentes,
+       con inventario automático y registro de actividad por usuario y por carro.</p>
+    <button class="btn-primary" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'})">
+      Solicitar demostración
+    </button>
+  </div>
+  <div><img src="assets/hombre.png" alt="Carro con ToolGuardian"></div>
+</section>
+
+<section class="section" id="beneficios">
+  <h2>Por qué ToolGuardian</h2>
+  <p class="sub">Diseñado para talleres y entornos donde perder una herramienta no es una opción.</p>
+  <div class="features">
+    <div class="feature-card"><h3>Inventario automático</h3><p>Detecta cambios al cerrar el cajón y actualiza el estado del carro sin esfuerzo.</p></div>
+    <div class="feature-card"><h3>Trazabilidad por usuario</h3><p>Asigna cada movimiento a una persona. Perfecto para localizar herramientas y auditorías.</p></div>
+    <div class="feature-card"><h3>Aplicación móvil y PC</h3><p>Dashboard permite controlar la actividad de toda la flota de carros en tiempo real.</p></div>
+    <div class="feature-card"><h3>Compatible con cualquier carro</h3><p>ToolGuardian se instala fácilmente en un carro convencional sin modificar la forma de trabajar del taller.</p></div>
+  </div>
+</section>
+
+
+<section class="section" id="como-funciona">
+  <h2>Cómo funciona ToolGuardian</h2>
+  <p class="sub">Encaja con la operativa natural del taller: identifica, usa con normalidad y valida automáticamente.</p>
+
+  <div class="how-grid">
+    <div class="how-cards">
+      <div class="how-card">
+        <div class="how-step">1</div>
+        <h3>Identificación del usuario</h3>
+        <p>El operario inicia sesión en la pantalla del carro. Desde ese momento, cada movimiento queda trazado por persona.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-step">2</div>
+        <h3>Uso normal del carro</h3>
+        <p>El operario abre y cierra cajones sin cambiar su manera de trabajar. ToolGuardian registra retiradas y devoluciones.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-step">3</div>
+        <h3>Resumen automático</h3>
+        <p>Al cerrar el cajón aparece un resumen con las herramientas retiradas/devueltas, alertas y devoluciones pendientes.</p>
+      </div>
+    </div>
+
+    <div class="how-dashboard" aria-label="Simulación de dashboard">
+      <div class="dash-top">
+        <span class="pill">Carro #03 · Línea montaje</span>
+        <span class="status"><span class="dot"></span>Online · Inventario sincronizado</span>
+      </div>
+
+      <div class="dash-cards">
+        <div class="dash-card dark">
+          <div class="dash-title">Carro de chapistería s/n 3</div>
+          <div class="dash-row">
+            <div class="dash-col">
+              <div class="dash-item"><strong>Llaves dinamométricas</strong><span>12/12 en carro</span></div>
+              <div class="dash-item"><strong>Herramientas críticas</strong><span>Uso autorizado</span></div>
+              <div class="dash-item"><strong>Préstamos</strong><span>2 herramientas en uso</span></div>
+            </div>
+            <div class="dash-col right">
+              <div class="kpi"><div class="kpi-n">214</div><div class="kpi-l">Operario</div></div>
+              <div class="kpi"><div class="kpi-n">97.8%</div><div class="kpi-l">Localizadas</div></div>
+            </div>
+          </div>
+          <div class="dash-bar"><span></span></div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-title">Inventario global</div>
+          <div class="dash-metrics">
+            <div><div class="metric-n">7</div><div class="metric-l">carros online</div></div>
+            <div><div class="metric-n">98.7%</div><div class="metric-l">herramientas disponibles</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-foot">
+        <div><span class="muted">Pérdidas reportadas</span><strong>3.7%</strong></div>
+        <div><span class="muted">Tiempo medio de préstamo</span><strong>57 minutos</strong></div>
+        <div><span class="muted">Carros conectados</span><strong>7</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Casos de uso</h2>
+  <p class="sub">Cubriendo desde un taller pequeño hasta flotas en múltiples naves o líneas.</p>
+  <div class="usecases">
+
+      <div class="usecase-card">
+      <div class="usecase-tag">Aeronáutica</div>
+      <h3>Operaciones de alta responsabilidad</h3>
+      <p>Perfecto para entornos donde la ausencia de una herramienta implica riesgo FOD o retrasos.</p>
+    </div>
+
+    <div class="usecase-card">
+      <div class="usecase-tag">Automoción</div>
+      <h3>Talleres y concesionarios</h3>
+      <p>Ideal para redes de servicio donde circulan muchos carros y operarios por turno.</p>
+    </div>
+
+    <div class="usecase-card">
+      <div class="usecase-tag">Industria</div>
+      <h3>Mantenimiento de planta</h3>
+      <p>Flujos de herramientas entre zonas, máquinas o equipos. Control centralizado y sencillo.</p>
+    </div>
+
+
+  </div>
+</section>
+
+
+<section class="contact" id="contacto">
+  <h2>Solicita información y demostración gratuita</h2>
+  <p>Cuéntanos tu caso y prepararemos una propuesta personalizada.</p>
+  <form id="contact-form" action="https://formspree.io/f/xykyyqdz" method="POST" accept-charset="UTF-8">
+
+    <input type="hidden" name="_subject" value="Nueva solicitud desde la landing ToolGuardian" />
+    <input type="hidden" name="_replyto" value="" />
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+
+    <div class="form-grid">
+      <input type="text" name="nombre" placeholder="Nombre completo" required />
+      <input type="email" name="email" placeholder="Correo electrónico" required />
+      <input type="text" name="empresa" placeholder="Empresa" />
+      <select name="carros">
+        <option>1–5 carros</option>
+        <option>6–20 carros</option>
+        <option>21–50 carros</option>
+        <option>50+</option>
+      </select>
+      <textarea name="mensaje" placeholder="Explícanos tus necesidades…"></textarea>
+    </div>
+    <p id="form-status" style="margin-top:12px; font-size:.95rem; color:#127a3a; display:none;"></p>
+    <p id="form-status-err" style="margin-top:12px; font-size:.95rem; color:#b42318; display:none;"></p>
+    <button>Enviar solicitud</button>
+  </form>
+</section>
+
+
+
+<section class="section" id="faq">
+  <div class="faq-tech">
+    <div class="faq">
+      <div class="kicker">Preguntas frecuentes</div>
+      <h2>Lo más habitual que nos preguntan.</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">¿Necesito cambiar mis carros actuales?</div>
+        <div class="faq-a">Definitivamente NO. ToolGuardian se puede integrar totalmente en carros existentes. La única restricción es que la herramienta esté visible y tenga un sitio dedicado en las bandejas.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">¿Qué pasa si la WiFi de planta falla?</div>
+        <div class="faq-a">El carro sigue operando en modo local. Cuando vuelve la conectividad, sincroniza los movimientos pendientes con el servidor central.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">¿Puedo empezar solo con un carro piloto?</div>
+        <div class="faq-a">Sí. La arquitectura está pensada para crecer por fases: piloto con 1 carro, ampliación a varias líneas y, más adelante, despliegue multi‑centro si tiene sentido.</div>
+      </div>
+    </div>
+
+    <div class="tech">
+      <div class="kicker">Ficha técnica rápida</div>
+      <h2 class="tech-title">Resumen tecnológico.</h2>
+
+      <div class="tech-card">
+        <div class="tech-row">
+          <div class="tech-k">Carro inteligente</div>
+          <div class="tech-v">Monitor con pantalla táctil, camara integrada y conectividad WiFi</div>
+        </div>
+        <div class="tech-row">
+          <div class="tech-k">Servidor central</div>
+          <div class="tech-v">Base de datos global de inventario y movimientos</div>
+        </div>
+        <div class="tech-row">
+          <div class="tech-k">Interfaz web</div>
+          <div class="tech-v">Acceso multi‑carro, filtros y reportes</div>
+        </div>
+        <div class="tech-row">
+          <div class="tech-k">Modo piloto</div>
+          <div class="tech-v">1–3 carros, alcance acotado y medible</div>
+        </div>
+        <div class="tech-row">
+          <div class="tech-k">Evolución</div>
+          <div class="tech-v">Integración posterior con ERP/CMMS como SAP.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="cta-demo">
+  <div>
+
+    <button class="btn-primary" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'})">
+      Solicitar demostración
+    </button>
+  </div>
+</section>
+
+<footer>
+  © ToolGuardian — Sistema inteligente de control de carros de herramientas
+</footer>
+
+
+<script>
+(function () {
+  const form = document.getElementById("contact-form");
+  if (!form) return;
+
+  const statusOk = document.getElementById("form-status");
+  const statusErr = document.getElementById("form-status-err");
+  const btn = form.querySelector("button");
+
+  function showOk(msg){
+    if (statusErr) statusErr.style.display = "none";
+    if (statusOk){ statusOk.textContent = msg; statusOk.style.display = "block"; }
+  }
+  function showErr(msg){
+    if (statusOk) statusOk.style.display = "none";
+    if (statusErr){ statusErr.textContent = msg; statusErr.style.display = "block"; }
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = form.querySelector('input[name="email"]')?.value || "";
+    const replyTo = form.querySelector('input[name="_replyto"]');
+    if (replyTo) replyTo.value = email;
+
+    if (btn){
+      btn.disabled = true;
+      btn.style.opacity = "0.75";
+      btn.textContent = "Enviando…";
+    }
+
+    try {
+      const formData = new FormData(form);
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: { "Accept": "application/json" }
+      });
+
+      if (res.ok) {
+        showOk("¡Solicitud enviada! Contactaremos contigo por correo en la mayor brevedad posible.");
+        form.reset();
+      } else {
+        let data = null;
+        try { data = await res.json(); } catch {}
+        const msg = (data && data.errors && data.errors[0] && data.errors[0].message)
+          ? data.errors[0].message
+          : "No se pudo enviar la solicitud. Inténtalo de nuevo en unos segundos.";
+        showErr(msg);
+      }
+    } catch (err) {
+      showErr("Error de conexión. Revisa tu internet e inténtalo de nuevo.");
+    } finally {
+      if (btn){
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.textContent = "Enviar solicitud";
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
